@@ -1,0 +1,149 @@
+# ============================================
+# 前端 - Node.js / Vue 3 / Vite
+# ============================================
+node_modules/
+.pnp/
+.pnp.js
+dist/
+dist-ssr/
+build/
+.out/
+.output/
+.cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+coverage/
+.nyc_output/
+
+# 环境变量（含密钥，严禁提交）
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# 前端日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ============================================
+# 后端 - Java / Spring Boot 3 / Maven / Gradle
+# ============================================
+target/
+build/
+out/
+bin/
+.gradle/
+.mvn/wrapper/maven-wrapper.jar
+
+# 本地配置（含数据库密码等，严禁提交）
+application-local.yml
+application-local.yaml
+application-local.properties
+application-dev.yml
+application-dev.yaml
+application-dev.properties
+
+# 密钥 / 证书
+*.key
+*.pem
+*.jks
+*.p12
+*.pfx
+secrets.yml
+secrets.yaml
+
+# 后端日志
+logs/
+*.log
+
+# 编译产物
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# ============================================
+# 通用 - IDE / 编辑器
+# ============================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.eclipse/
+.classpath
+.project
+.settings/
+
+# VS Code（只保留团队共享配置）
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.lh
+
+# 其他
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+
+# ============================================
+# 通用 - 操作系统
+# ============================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ============================================
+# 通用 - 临时 / 缓存 / 备份
+# ============================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================
+# Docker（按需，有则用，无则忽略）
+# ============================================
+docker-compose.override.yml
+.docker/
+*.pid
+
+# ============================================
+# 测试 / 覆盖率
+# ============================================
+test-output/
+surefire-reports/
+failsafe-reports/
+*.lcov
+
+# ============================================
+# 文档 / 其他（按需取消注释）
+# ============================================
+# *.pdf
+# *.doc
+# *.docx
+# *.xls
+# *.xlsx
+# *.ppt
+# *.pptx
