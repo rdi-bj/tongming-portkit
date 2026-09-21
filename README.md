@@ -1,4 +1,3 @@
-
 # RISC-V 专用 AI 跨平台移植工具
 
 ---
@@ -36,8 +35,8 @@
 ### 1. 克隆项目
 
 ```bash
-git clone <your-repo-url>
-cd <project-root>
+git clone https://github.com/rdi-bj/tongming-portkit
+cd https://github.com/rdi-bj/tongming-portkit
 ```
 
 ### 2. 基础中间件准备
