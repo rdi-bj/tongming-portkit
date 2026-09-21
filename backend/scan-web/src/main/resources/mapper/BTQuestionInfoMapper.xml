@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinw.web.mapper.BTQuestionInfoMapper">
+
+    <insert id="insertBatch">
+        INSERT INTO b_t_question_info
+        (
+        ID,
+        TEXT,
+        START_LINE,
+        END_LINE,
+        START_COL,
+        END_COL,
+        QUESTION_TYPE,
+        FILE_TYPE,
+        TASK_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        IS_DELETE,
+        FILE_PATH,
+        RULE_ID,
+        DESCRIPTION,
+        STATUS,
+        FILE_ID,
+        HIT_KNOWLEDGE,
+        FRAMEWORK,
+        HAVE_ADAPT
+        )
+        VALUES
+        <foreach collection="questionInfos" item="item" separator=",">
+            (
+            UUID(),
+            #{item.text},
+            #{item.startLine},
+            #{item.endLine},
+            #{item.startCol},
+            #{item.endCol},
+            #{item.questionType},
+            #{item.fileType},
+            #{item.taskId},
+            NOW(),
+            NOW(),
+            0,
+            #{item.filePath},
+            #{item.ruleId},
+            #{item.description},
+            #{item.status},
+            #{item.fileId},
+            #{item.hitKnowledge},
+            #{item.framework},
+            #{item.haveAdapt}
+            )
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,13 @@
+spring:
+  main:
+    web-application-type: none
+
+cscan:
+  web:
+    enabled: false
+
+  worker:
+    enabled: false
+
+  corpus:
+    enabled: true

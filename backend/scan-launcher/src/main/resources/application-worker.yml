@@ -1,0 +1,15 @@
+spring:
+  main:
+    web-application-type: none
+
+cscan:
+  web:
+    enabled: false
+
+  worker:
+    enabled: true
+    task-timeout-ms: 300000
+    gc-interval-ms: 60000
+
+  corpus:
+    enabled: false

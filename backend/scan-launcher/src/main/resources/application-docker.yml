@@ -1,0 +1,32 @@
+server:
+  port: 9090
+
+spring:
+  datasource:
+    url: jdbc:mysql://riscv-mysql:3306/riscv_manage?useUnicode=true&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: Zjjw@123
+
+  rabbitmq:
+    host: riscv-rabbitmq
+    port: 5672
+    username: xc
+    password: Zjjw@123
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        concurrency: 5
+        max-concurrency: 10
+        default-requeue-rejected: false
+
+cscan:
+  file-path: /home/jinwang/rv-scan/files
+
+logging:
+  level:
+    com.jinw: INFO
+
+opencode:
+  url: http://riscv-opencode:9000
