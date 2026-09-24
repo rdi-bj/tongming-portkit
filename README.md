@@ -21,7 +21,7 @@
 
 | 层       | 技术                                                         |
 | -------- | ------------------------------------------------------------ |
-| 前端     | **Vue 3** + **Antdv Next**                             |
+| 前端     | **Vue 3** + **Antdv Next**                       |
 | 后端     | **SpringBoot3** + Java 21                              |
 | 数据库   | **MySQL** 8.4                                          |
 | 代码解析 | **tree-sitter**（多语言语法树解析）                    |
@@ -70,12 +70,6 @@ java -jar scan-launcher/target/cscan.jar --spring.profiles.active=all,prod
 ```
 
 > `all` 同时启用 Web 与 Worker，扫描任务经 RabbitMQ 在本进程内消费完成；也可在 IDE 中直接运行 `ScanApplication.java`，profile 设为 `all,prod`。
-
-#### 3.3 单独启动 Worker（TODO）
-
-Worker 侧（`scan-worker`）消费扫描任务队列，与 Web 侧通过 RabbitMQ 解耦，两侧对应的 profile 为 `worker` 与 `web`。
-
-当前后端未按这两个 profile 正确隔离组件，单独启动 Worker 会因缺少 Servlet 容器而失败，暂请使用 3.2 的单进程方式（`all`）；后端修复后在此补充启动方式。
 
 ### 4. 前端启动（Vue3 + Vite）
 
