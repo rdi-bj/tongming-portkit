@@ -87,7 +87,7 @@
     "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .browserslistrc",
     ".gitignore": ".gitattributes",
     ".env": ".env.*",
-    "eslint.config.js": ".editorconfig, commitlint.config.js, stylelint.config.js, prettier.config.js, .prettierignore, .stylelintignore",
+    "eslint.config.js": ".editorconfig, stylelint.config.js, prettier.config.js, .prettierignore, .stylelintignore",
     ".npmrc": ".nvmrc, .node-version",
     "vite.config.ts": "index.html, loading.html",
     "README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE, README.md"
