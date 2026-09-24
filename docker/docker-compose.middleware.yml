@@ -1,0 +1,88 @@
+# Middleware for local development: MySQL (business database) + RabbitMQ (task queue)
+#
+# The backend's Web side and Worker side talk to each other over RabbitMQ,
+# and business data lives in MySQL (riscv_manage by default, see MYSQL_DATABASE below). Both run in containers
+# while the application stays on the host.
+#
+# Usage:
+#   docker compose -f docker/docker-compose.middleware.yml up -d
+#   docker compose -f docker/docker-compose.middleware.yml ps    # both services should be healthy
+#
+# The database is seeded on the container's first start from the scripts in ./mysql/init, mounted read-only
+# into /docker-entrypoint-initdb.d/. They carry no CREATE DATABASE / USE statement, so they import into
+# MYSQL_DATABASE and no database has to be created by hand.
+#
+# 10-riscv_manage.sql is a corrected copy of backend/scan-web/riscv_manage.sql: the upstream dump cannot be
+# imported as is (narrow encrypted columns, missing table and columns) and is left untouched here. It also
+# seeds b_t_regexp empty and keeps the default account's password in plain text, matching the login code.
+#
+# The defaults below (database riscv_manage, MySQL root/Zjjw@123, RabbitMQ xc/Zjjw@123) match the backend's
+# application-prod.yml, which is the profile the README starts the backend with; only the RabbitMQ host
+# differs, because this stack publishes it on the host as 127.0.0.1. Any of them can be overridden with a
+# .env file next to this file (MYSQL_DATABASE, MYSQL_ROOT_PASSWORD, MYSQL_PORT, RABBITMQ_USER,
+# RABBITMQ_PASSWORD, RABBITMQ_PORT, RABBITMQ_MANAGEMENT_PORT). They are local-development defaults and must
+# be overridden in production.
+name: riscv-portkit
+
+services:
+  # MySQL 8.4 LTS (Oracle Linux 9 base image): Premier support until 2029-04, Extended until 2032-04
+  # (Not 8.0: its Extended support ended on 2026-04-30, it is EOL)
+  # Pinned to a patch version so the image content is reproducible: scan baselines and fix verification follow the tag
+  riscv-mysql:
+    image: mysql:8.4.11-oraclelinux9
+    container_name: riscv-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-Zjjw@123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-riscv_manage}
+      TZ: Asia/Shanghai
+    # Charset/collation kept in sync with utf8mb4_0900_ai_ci in the backend SQL scripts
+    # 8.4 disables mysql_native_password by default, so root uses caching_sha2_password;
+    # the backend JDBC URL already carries allowPublicKeyRetrieval=true&useSSL=false, so connector 9.1.0 needs no extra config
+    # lower-case-table-names must be 1: the dev database uses 1, and the entity is annotated @TableName("C_T_SYS_USER") (upper case)
+    # while the table created by the dump is lower case; Linux defaults to 0 (case-sensitive) and that table would not be found.
+    # Note: this option only takes effect when the data directory is initialised, so remove the volume and recreate it after a change.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+08:00
+      - --lower-case-table-names=1
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-Zjjw@123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # RabbitMQ 4.3: community-supported (4.2 left community support on 2026-07-31, 3.13 on 2024-09-17)
+  # The backend only uses durable classic queues and none of the legacy options removed in 4.x (classic queue mirroring etc.)
+  # Ubuntu base image (not alpine): practical fixability of scan findings comes first
+  riscv-rabbitmq:
+    image: rabbitmq:4.3.6-management
+    container_name: riscv-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-xc}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-Zjjw@123}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
+      TZ: Asia/Shanghai
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mysql-data:
+  rabbitmq-data:

@@ -126,7 +126,6 @@ ehthumbs.db
 # Docker (optional: used when present, otherwise ignored)
 # ============================================
 docker-compose.override.yml
-.docker/
 *.pid
 
 # ============================================
