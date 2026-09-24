@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: c-scan-platform
+
+  profiles:
+    active: all,dev
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1GB
+      max-request-size: 1GB
+      file-size-threshold: 2MB
+
+# 规则表字段加解密密钥（AES-128-CBC）
+# 注意：真实密钥请勿提交到版本库；key 与 iv 必须各为 16 字节（UTF-8）
+security:
+  aes:
+    key: RvScanRuleAes128
+    iv: RvScanRuleIv1280

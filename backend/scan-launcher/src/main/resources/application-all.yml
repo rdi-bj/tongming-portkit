@@ -1,0 +1,12 @@
+server:
+  port: 9090
+
+cscan:
+  web:
+    enabled: true
+
+  worker:
+    enabled: true
+
+  corpus:
+    enabled: false

@@ -1,0 +1,33 @@
+server:
+  port: 9090
+
+spring:
+  main:
+    web-application-type: servlet
+
+cscan:
+  web:
+    enabled: true
+    queue-poll-interval-ms: 5000
+  worker:
+    enabled: false
+  corpus:
+    enabled: false
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.jinw.web
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
