@@ -10,11 +10,10 @@
 
 ## 🚀 环境要求
 
-- JDK 21+
+- JDK 21
 - Node.js 20+
-- MySQL 8.0+
-- Redis
-- RabbitMQ
+- MySQL 8.4+
+- RabbitMQ 4.x
 
 ---
 
@@ -24,7 +23,7 @@
 | -------- | ------------------------------------------------------------ |
 | 前端     | **Vue 3** + **Antdv Next**                             |
 | 后端     | **SpringBoot3** + Java 21                              |
-| 数据库   | **MySQL** 8.0                                          |
+| 数据库   | **MySQL** 8.4                                          |
 | 代码解析 | **tree-sitter**（多语言语法树解析）                    |
 | 接口调用 | **retrofit-spring-boot-starter**（声明式 HTTP 客户端） |
 
@@ -36,52 +35,47 @@
 
 ```bash
 git clone https://github.com/rdi-bj/tongming-portkit
-cd https://github.com/rdi-bj/tongming-portkit
+cd tongming-portkit
 ```
 
 ### 2. 基础中间件准备
 
-启动项目依赖的中间件（MySQL / Redis / RabbitMQ）。推荐使用 Docker 一键拉起：
+启动项目依赖的中间件（MySQL / RabbitMQ）：
 
 ```bash
-docker run -d --name mysql   -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:8.0
-docker run -d --name redis   -p 6379:6379 redis
-docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
+docker compose -f docker/docker-compose.middleware.yml up -d
 ```
 
-- **MySQL**：创建数据库 `scan_db`，并执行 `backend/sql/init.sql`（如有）
-- **RabbitMQ**：管理界面 `http://localhost:15672`（默认账号 `guest/guest`）
+- **MySQL**：数据库 `riscv_manage`，首次启动自动导入表结构与初始数据
+- **RabbitMQ**：管理界面 `http://localhost:15672`，账号 `xc`
 
 ### 3. 后端启动（SpringBoot3）
 
 #### 3.1 配置修改
 
-进入 `backend/scan-launcher/src/main/resources/`，根据环境复制并修改配置：
+配置位于 `backend/scan-launcher/src/main/resources/`，启动使用 `all` + `prod` 两个 profile，按环境修改：
 
-主要修改项：
+- `spring.datasource`：MySQL 连接，`application-prod.yml` 中为 `localhost:3306/riscv_manage`，与第 2 步的 compose 一致
+- `spring.rabbitmq`：RabbitMQ 连接，`application-prod.yml` 中为内网地址，本机运行需改为 `127.0.0.1`
+- `cscan.file-path`：源码包与扫描产物的存放目录，需改为已存在且可写的路径（如 `~/rv-scan-files`）
+- `server.port`：后端端口，默认 `9090`
+- `opencode.url`：AI 适配所用的 opencode 服务地址，不在本仓库 compose 内，需自行提供
 
-- `spring.datasource`：MySQL 连接地址、账号、密码
-- `spring.data.redis`：Redis 连接
-- `spring.rabbitmq`：RabbitMQ 连接
-- `llm`：大模型 API 地址与密钥（如启用 AI 适配）
-
-#### 3.2 启动 Master（scan-launcher）
-
-```bash
-cd backend/scan-launcher
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev,web,worker,corpus
-```
-
-> 也可在 IDE 中直接运行 `ScanApplication.java`。
-
-#### 3.3 启动 Slave（scan-worker）
+#### 3.2 启动后端（scan-launcher）
 
 ```bash
-cd backend/scan-worker
-./mvnw spring-boot:run
+cd backend
+mvn -pl scan-launcher -am package -DskipTests
+java -jar scan-launcher/target/cscan.jar --spring.profiles.active=all,prod
 ```
 
-Worker 启动后会自动连接 RabbitMQ 并监听任务队列，等待 Master 分发任务。
+> `all` 同时启用 Web 与 Worker，扫描任务经 RabbitMQ 在本进程内消费完成；也可在 IDE 中直接运行 `ScanApplication.java`，profile 设为 `all,prod`。
+
+#### 3.3 单独启动 Worker（TODO）
+
+Worker 侧（`scan-worker`）消费扫描任务队列，与 Web 侧通过 RabbitMQ 解耦，两侧对应的 profile 为 `worker` 与 `web`。
+
+当前后端未按这两个 profile 正确隔离组件，单独启动 Worker 会因缺少 Servlet 容器而失败，暂请使用 3.2 的单进程方式（`all`）；后端修复后在此补充启动方式。
 
 ### 4. 前端启动（Vue3 + Vite）
 
@@ -115,54 +109,44 @@ pnpm dev
 
 ### 5. 验证启动
 
-- 前端登录页正常加载（默认账号见数据库初始化脚本）
+- 前端登录页正常加载，默认账号 `jwAdmin` / `Portkit@123`，首次登录后请修改
 - 进入「迁移检测」页面，上传源码包测试快速扫描
 - 观察后端日志，确认任务经 RabbitMQ 成功分发至 Worker 执行
 
-### 6. Docker 一键启动（可选）
-
-如需容器化部署，使用项目根目录的 `docker-compose.yml`（如有）：
-
-```bash
-docker-compose up -d
-```
-
----
-
 ### 📌 常见问题
 
-- **端口冲突**：后端端口改 `application.yml` 的 `server.port`，并同步前端 `.env.development` 的后端源地址 `VITE_API_BASE_URL`；前端自身端口在 `frontend/vite.config.ts` 的 `server.port`。
-- **RabbitMQ 连接失败**：检查 `application-mq.yml` 配置，确认 RabbitMQ 服务已启动。
-- **AI 适配无响应**：确认 `application-corpus.yml` 中大模型配置正确且网络可达。
+- **端口冲突**：后端端口改 `application-all.yml` / `application-web.yml` / `application-docker.yml` 里的 `server.port`（默认 9090），并同步前端 `.env.development` 的后端源地址 `VITE_API_BASE_URL`；前端自身端口在 `frontend/vite.config.ts` 的 `server.port`。
+- **RabbitMQ 连接失败**：检查当前 profile 的 `spring.rabbitmq`，确认 RabbitMQ 服务已启动且账号密码一致。
+- **AI 适配无响应**：确认 `opencode.url` 指向的 opencode 服务可达，并检查后端日志中的模型调用报错。
 
 ---
 
 ## 📁 项目结构
 
-项目采用 **前后端分离** 架构，后端基于 SpringBoot3 构建，以 **Master/Slave（主从）** 模式协作：`scan-launcher` 为 Master 端（任务调度/管理），`scan-worker` 为 Slave 端（任务执行），两者通过 **RabbitMQ** 进行任务发布与通信。
+项目采用 **前后端分离** 架构，后端基于 SpringBoot3 构建：**Web 侧**负责任务调度与管理，**Worker 侧**负责消费任务并执行代码扫描/适配，两侧通过 **RabbitMQ** 进行任务发布与通信。
 
 ### 后端结构
 
 ```
 backend/
-├── scan-launcher/                   # Master 端：任务调度与下发给 Worker
+├── scan-launcher/                   # 启动模块：Web 与 Worker 的统一启动入口
 │   ├── src/main/java/com/jinw/ScanApplication.java
 │   └── src/main/resources/
-│       ├── application.yml            # 主配置（含 RabbitMQ）
-│       ├── application-dev.yml        # 开发环境
+│       ├── application.yml            # 主配置
 │       ├── application-prod.yml       # 生产环境
 │       ├── application-web.yml        # Web 相关配置
 │       ├── application-worker.yml     # Worker 相关配置
 │       ├── application-docker.yml     # Docker 部署配置
 │       ├── application-corpus.yml     # 语料库配置
 │       └── application-all.yml        # 全量聚合配置
-├── scan-worker/                     # Slave 端：消费任务并执行代码扫描/适配
+├── scan-worker/                     # Worker 侧：消费任务并执行代码扫描/适配
 │   └── src/main/java/com/jinw/worker/
 │       ├── config/                    # 配置
 │       ├── consumer/                  # RabbitMQ 任务消费者
-│       ├── cdt2/                      # CDT 解析
 │       ├── ast/                       # AST 语法树解析（c/cpp）
 │       ├── llm/                       # 大模型接入（agent、config、utils）
+│       ├── task/                      # 任务跟踪与回收
+│       ├── util/                      # 工具类
 │       └── log/                       # 日志
 ├── scan-common/                     # 公共模块（domain、constant、enums、utils）
 ├── scan-mq/                         # 消息队列模块（RabbitMQ 发布/订阅）
@@ -239,7 +223,7 @@ frontend/
 
 ### 任务通信机制
 
-`scan-launcher`（Master）通过 RabbitMQ 向 `scan-worker`（Slave）发布扫描/适配任务，Worker 消费任务执行分析后返回结果，实现主从分布式任务处理。
+Web 侧通过 RabbitMQ 发布扫描/适配任务，Worker 侧消费任务执行分析后返回结果。
 
 ---
 
