@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>%VITE_APP_TITLE%</title>
+  </head>
+  <body>
+    <div id="loader-container">
+      <div class="loader">
+        <div class="loader-wrapper">
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner"></div>
+        </div>
+      </div>
+      <div class="loader-title">Loading...</div>
+    </div>
+    <style>
+      [data-app-loading].light {
+        --color-primary: #1677ff;
+        background-color: #fff;
+        color: rgba(0, 0, 0, 0.88);
+      }
+      [data-app-loading].dark {
+        --color-primary: #1668dc;
+        background-color: #141414;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      #loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .loader-title {
+        font-family:
+          Noto Sans SC,
+          sans-serif;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+      .loader {
+        margin-bottom: 1rem;
+      }
+      .loader-wrapper {
+        animation: spin 1.2s linear infinite;
+        transform: rotate(45deg);
+        position: relative;
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+      .loader-spinner {
+        animation: loader-spinner 1s linear infinite alternate;
+        width: 0.9rem;
+        height: 0.9rem;
+        background-color: var(--color-primary);
+        position: absolute;
+        transform-origin: 50%;
+        border-radius: 50%;
+        opacity: 0.3;
+      }
+      .loader-spinner:first-child {
+        top: 0;
+        inset-inline-start: 0;
+        animation-delay: 0s;
+      }
+      .loader-spinner:nth-child(2) {
+        top: 0;
+        inset-inline-end: 0;
+        animation-delay: 0.4s;
+      }
+      .loader-spinner:nth-child(3) {
+        bottom: 0;
+        inset-inline-end: 0;
+        animation-delay: 0.8s;
+      }
+      .loader-spinner:nth-child(4) {
+        bottom: 0;
+        inset-inline-start: 0;
+        animation-delay: 1.2s;
+      }
+      @keyframes loader-spinner {
+        100% {
+          opacity: 1;
+        }
+      }
+      @keyframes spin {
+        100% {
+          transform: rotate(405deg);
+        }
+      }
+    </style>
+    <script>
+      const colorMode = localStorage.getItem('tongming-portkit-color-mode') || 'auto'
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+      const loaderElement = document.querySelector('[data-app-loading]')
+      if ((colorMode === 'auto' && prefersDarkMode) || colorMode === 'dark') {
+        loaderElement.classList.add('dark')
+      } else {
+        loaderElement.classList.add('light')
+      }
+
+      // i18n: read the language chosen by the user
+      try {
+        var raw = localStorage.getItem('tongming-portkit-app-config')
+        if (raw) {
+          var config = JSON.parse(raw)
+          var locale = config.locale || 'zh-CN'
+          var titleEl = document.querySelector('.loader-title')
+          if (titleEl) {
+            if (locale === 'zh-CN') titleEl.textContent = '加载中...'
+          }
+        }
+      } catch (e) {}
+    </script>
+  </body>
+</html>

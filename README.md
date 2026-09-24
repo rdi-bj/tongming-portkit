@@ -12,7 +12,7 @@
 ## 🚀 环境要求
 
 - JDK 21+
-- Node.js 18+
+- Node.js 20+
 - MySQL 8.0+
 - Redis
 - RabbitMQ
@@ -23,7 +23,7 @@
 
 | 层       | 技术                                                         |
 | -------- | ------------------------------------------------------------ |
-| 前端     | **Vue3** + Element Plus                                |
+| 前端     | **Vue 3** + **Antdv Next**                             |
 | 后端     | **SpringBoot3** + Java 21                              |
 | 数据库   | **MySQL** 8.0                                          |
 | 代码解析 | **tree-sitter**（多语言语法树解析）                    |
@@ -88,7 +88,7 @@ Worker 启动后会自动连接 RabbitMQ 并监听任务队列，等待 Master �
 
 #### 4.1 环境准备
 
-- **Node.js 18+**
+- **Node.js 20+**
 - 推荐使用 `pnpm`：`npm install -g pnpm`
 
 #### 4.2 安装依赖
@@ -100,7 +100,11 @@ pnpm install
 
 #### 4.3 配置后端代理
 
-检查 `frontend/vite.config.ts` 中的代理设置，确保三个后端代理前缀指向正确的后端地址（默认 `http://localhost:8080`）。如需修改接口地址，可编辑 `.env.development` 中的 `VITE_API_BASE_URL`。
+前端共 3 个变量，定义在 `frontend/.env`，各模式可用 `.env.development` 等覆盖；代理配置见 `frontend/vite.config.ts`：
+
+- `VITE_APP_BASE_PATH`：部署基础路径，同时作为 Vite `base` 与路由 base，默认 `/tongming-portkit/`
+- `VITE_API_BASE_PATH`：接口前缀，默认 `/tongming-portkit-api`，也是开发代理的键
+- `VITE_API_BASE_URL`：后端源地址，仅开发代理的 target 使用，`.env.development` 中为 `http://127.0.0.1:9090`
 
 #### 4.4 启动开发服务器
 
@@ -108,7 +112,7 @@ pnpm install
 pnpm dev
 ```
 
-浏览器访问 `http://localhost:5173`（具体端口以终端输出为准）。
+浏览器访问 `http://localhost:5500/tongming-portkit/`。
 
 ### 5. 验证启动
 
@@ -128,7 +132,7 @@ docker-compose up -d
 
 ### 📌 常见问题
 
-- **端口冲突**：修改 `application.yml` 中 `server.port` 或前端 `.env.development` 的 `VITE_API_BASE_URL`。
+- **端口冲突**：后端端口改 `application.yml` 的 `server.port`，并同步前端 `.env.development` 的后端源地址 `VITE_API_BASE_URL`；前端自身端口在 `frontend/vite.config.ts` 的 `server.port`。
 - **RabbitMQ 连接失败**：检查 `application-mq.yml` 配置，确认 RabbitMQ 服务已启动。
 - **AI 适配无响应**：确认 `application-corpus.yml` 中大模型配置正确且网络可达。
 
@@ -173,28 +177,21 @@ backend/
 frontend/
 ├── src/                         # 前端源码（Vue 3 + TS + Vite）
 │   ├── api/                     # 接口层（对应后端 scan-web 的 HTTP 调用侧）
-│   │   ├── index.ts             # alova 实例（/proxy-api，通用后台接口，含 mock 适配器）
 │   │   ├── scan.ts              # Scanner 接口：项目 CRUD、启动扫描、进度/文件树/报告
 │   │   ├── llm.ts               # LLM 接口：模型配置、文件/项目级适配、适配结果、项目树
-│   │   ├── kingow.ts            # Kingow 商业版接口：登录、用户、权限
-│   │   ├── auth.ts              # 认证接口（OSS 开源版 /sys/user/login）
-│   │   └── mock/                # @alova/mock 模拟数据（开发环境 VITE_API_ENABLE_MOCK=true）
+│   │   └── auth.ts              # 认证接口（OSS 开源版 /sys/user/login）
 │   ├── components/              # 组件层
 │   │   ├── scan/                # ★ 扫描业务组件
 │   │   │   ├── ScanProgressDialog.vue    # 检测进度弹窗（解压/扫描/AI 复核逐文件状态）
 │   │   │   ├── ScanReportDialog.vue      # 在线检测报告弹窗（与离线导出报告格式对齐）
 │   │   │   ├── AtlasPanel.vue            # 迁移画像面板（ECharts：语言/汇编/依赖/构建）
-│   │   │   ├── HomePageAtlas.vue         # 首页画像（拉取画像数据并组织 AtlasPanel）
-│   │   │   └── ScanDemoDialog.vue        # 扫描演示弹窗（配合 simulate-quick-scan 调试用）
-│   │   ├── light/               # 轻量通用组件（LightButton/Card/Dialog/Tabs...）
-│   │   ├── internal/            # 框架内部组件（Logo、主题/语言/折叠开关、UI Provider）
-│   │   ├── demo/                # 模板演示组件（调研表、检测报告、进度示例等）
-│   │   ├── GraphCanvas.vue      # 自研 Canvas 函数调用/依赖关系图
-│   │   └── GraphCanvasForce3D.vue  # 3D force-graph 关系图（three.js）
+│   │   │   └── HomePageAtlas.vue         # 首页画像（拉取画像数据并组织 AtlasPanel）
+│   │   ├── light/               # 轻量通用组件（LightButton/Card/Descriptions/Dialog/Link/Tabs）
+│   │   ├── internal/            # 框架内部组件（Logo、主题/语言/折叠开关、UI Provider、配置面板、图标渲染）
+│   │   └── GraphCanvas.vue      # 自研 Canvas 函数调用/依赖关系图
 │   ├── composables/             # 逻辑编排层（对应后端 scan-mq 的消费侧）
 │   │   ├── useScanWebSocket.ts      # 单任务扫描进度 WS（心跳15s+指数退避重连）
 │   │   ├── useScanListProgressWs.ts # 列表页多任务进度 WS（替代 HTTP 轮询）
-│   │   ├── usePolling.ts            # 通用轮询
 │   │   ├── useTypewriter.ts         # 打字机效果（适配方案一次性显示后保留）
 │   │   ├── useAtlasData.ts          # 迁移画像数据聚合/视觉色调
 │   │   └── useGraphScene.ts         # 关系图 Three.js 场景
@@ -202,23 +199,21 @@ frontend/
 │   │   ├── dashboard/index.vue  # 首页/迁移画像总览
 │   │   ├── scan/projects.vue    # ★ 迁移检测（项目列表/卡片、快速/深度扫描入口）
 │   │   ├── llm/adapt/index.vue  # ★ AI 适配（项目/文件级适配、适配后代码查看）
-│   │   ├── graph/index.vue      # 关系图（函数调用图 2D/3D）
 │   │   ├── system/models/       # 大模型配置管理
-│   │   ├── login/               # 登录页（Kingow/OSS 双模式）
+│   │   ├── login/               # 登录页（OSS 开源版）
 │   │   ├── error/               # 403/404 错误页
-│   │   ├── demo/                # 模板遗留演示页（调研表、快捷接入、组件演示）
-│   │   ├── form/ permission/    # 模板遗留示例页
 │   │   └── [...path].vue        # 404 兜底路由
 │   ├── layouts/                 # 布局壳（default=管理后台，pure=登录等纯净页）
 │   ├── layout-blocks/           # 布局预设块（top/side/mix）
 │   ├── layout-components/       # 布局组成件（header/sider/menu/breadcrumb/content/footer）
 │   ├── stores/                  # 状态层（Pinia：app 应用配置、user 用户/权限、routes 路由）
+│   ├── hooks/                   # 通用 hooks（useECharts：ECharts 实例生命周期）
 │   ├── utils/                   # 基础设施（对应后端 scan-common）
 │   │   ├── scan-request.ts      # Scanner 专用 alova 实例 + 文件下载（blob/Content-Disposition）
-│   │   ├── kingow-auth.ts       # token 存取、记住密码
-│   │   └── element.ts / event-bus.ts / model.ts / promiseModels.ts / utils.ts
-│   ├── lib/                     # 图数据与演示数据（edgesDataLoader、forceSimulation、graphData、demoData）
-│   ├── hooks/                   # 通用 hooks（useECharts）
+│   │   ├── auth-storage.ts      # token 存取、记住密码
+│   │   ├── element.ts           # 无头 DOM 效果（文件上传/下载）
+│   │   └── event-bus.ts         # 事件总线（mitt 实例）
+│   ├── lib/                     # 图数据与共享底层（edgesDataLoader、forceSimulation、graphData、scanSocket）
 │   ├── constants/               # 常量（app 配置、regex 正则）
 │   ├── types/                   # 领域类型（对应后端 domain）：scan/llm/api/pages/app/router...
 │   │   └── generated/           # 自动生成（auto-imports、components、typed-router）
@@ -226,22 +221,21 @@ frontend/
 │   ├── styles/                  # 全局样式（global、atlas、view-transition）
 │   ├── plugins/                 # 应用装配（对应后端 application-*.yml 聚合配置）
 │   │   ├── index.ts             # 装配入口：store→权限→i18n→router
-│   │   └── router.ts / i18n.ts / store.ts / progress-bar.ts / echarts.ts
+│   │   ├── router.ts / i18n.ts / store.ts / progress-bar.ts
+│   │   └── echarts.ts           # ECharts 注册（Bar/Line/Pie + Canvas 渲染器）
 │   ├── config.default.ts        # 默认应用配置 AppConfig
 │   └── main.ts                  # 应用入口
 ├── build/                       # Vite 构建配置模块（index 组装插件/postcss/路径解析）
-├── locales/                     # 国际化（zh-CN / en-US / zh-TW）
-├── docs/                        # OpenAPI 接口文档快照（api-docs.v1~v7）
+├── locales/                     # 国际化（zh-CN / en-US）
 ├── scripts/                     # 辅助脚本
-│   ├── simulate-quick-scan.mjs  # 快速扫描 WS 消息模拟器（调试进度弹窗）
 │   └── find-i18n-leaks.mjs      # i18n key 泄漏检查
 ├── public/                      # 静态资源（favicon、_redirects）
 └── 根配置                        # 相当于后端各 application.yml
-    ├── vite.config.ts           # 主配置：代理、别名、构建（含三个后端代理前缀）
+    ├── vite.config.ts           # 主配置：base、接口前缀代理、别名、构建
     ├── uno.config.ts            # UnoCSS 原子化样式
     ├── tsconfig*.json           # TS 工程配置
-    ├── eslint/stylelint/prettier/commitlint
-    └── .env.development / .env.test / .env.production
+    ├── eslint/stylelint/prettier
+    └── .env / .env.development / .env.test / .env.production
 ```
 
 ### 任务通信机制

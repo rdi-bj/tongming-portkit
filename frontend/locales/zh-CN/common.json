@@ -1,0 +1,21 @@
+{
+  "close": "关闭",
+  "logout": "退出登录",
+  "error": {
+    "403": "对不起，您无权访问此页面",
+    "404": "您所访问的页面不存在"
+  },
+  "back-home": "回到首页",
+  "back": "返回上级",
+  "unnamed-page": "未命名页面",
+  "locale_zh_CN": "简体中文",
+  "locale_en_US": "English",
+  "request": {
+    "failed": "请求失败",
+    "failed-with-status": "请求失败 ({status})",
+    "load-file-tree-failed": "加载文件树失败"
+  },
+  "light": {
+    "dialog-default-title": "弹窗标题"
+  }
+}

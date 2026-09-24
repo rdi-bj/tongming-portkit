@@ -1,0 +1,22 @@
+{
+  "login": "Login",
+  "home": "Home",
+  "dashboard": {
+    "index": "Home"
+  },
+  "error": {
+    "index": "Error",
+    "403": "403 Forbidden",
+    "404": "404 Not Found"
+  },
+  "scan": {
+    "index": "Migration Detection"
+  },
+  "llm": {
+    "adapt": "AI Adaptation"
+  },
+  "system": {
+    "index": "System Configuration",
+    "models": "Model Maintenance"
+  }
+}

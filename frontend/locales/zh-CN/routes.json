@@ -1,0 +1,22 @@
+{
+  "login": "登录",
+  "home": "首页",
+  "dashboard": {
+    "index": "首页"
+  },
+  "error": {
+    "index": "错误页",
+    "403": "403",
+    "404": "404"
+  },
+  "scan": {
+    "index": "移植检测"
+  },
+  "llm": {
+    "adapt": "AI适配"
+  },
+  "system": {
+    "index": "系统配置",
+    "models": "模型维护"
+  }
+}

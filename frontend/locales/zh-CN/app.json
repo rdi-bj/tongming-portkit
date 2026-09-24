@@ -1,0 +1,40 @@
+{
+  "title": "RISC-V 专用 AI 跨平台移植工具",
+  "layout": {
+    "side": "侧边栏模式",
+    "top": "顶部模式",
+    "mix": "混合模式"
+  },
+  "color-mode": {
+    "dark": "暗色模式",
+    "light": "亮色模式",
+    "auto": "跟随系统"
+  },
+  "config": {
+    "color-mode": "整体风格设置",
+    "primary-color": "主题色",
+    "menu-color-mode": "菜单风格",
+    "layout": "布局模式",
+    "content-width": "内容区域宽度",
+    "breadcrumb": "面包屑"
+  },
+  "content-width": {
+    "fixed": "定宽",
+    "fluid": "流式"
+  },
+  "primary-color": {
+    "default": "科技蓝（默认）",
+    "awake": "拂晓",
+    "mourning": "薄暮",
+    "volcano": "火山",
+    "sunset": "日暮",
+    "morning": "明青",
+    "green": "极光绿",
+    "geek": "极客蓝",
+    "purple": "酱紫"
+  },
+  "not-support-clipboard": "当前环境不支持复制",
+  "config-copy-success": "复制成功，请粘贴到src/config.ts中",
+  "logo": "Logo",
+  "copy-config": "复制配置"
+}

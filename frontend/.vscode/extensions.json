@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "rvest.vs-code-prettier-eslint",
+    "editorconfig.editorconfig",
+    "antfu.iconify",
+    "vue.volar",
+    "stylelint.vscode-stylelint",
+    "dbaeumer.vscode-eslint",
+    "formulahendry.auto-rename-tag",
+    "bradlc.vscode-tailwindcss",
+    "lokalise.i18n-ally"
+  ]
+}

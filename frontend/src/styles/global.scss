@@ -1,0 +1,16 @@
+html {
+  @apply w-unset h-unset scroll-smooth;
+}
+
+body {
+  @apply antialiased min-h-screen max-w-screen overflow-x-hidden overflow-y-auto;
+}
+
+.ant-btn-icon {
+  @apply h-full flex-c inline-flex;
+}
+
+.ant-pagination-item-ellipsis {
+  font-family: sans-serif;
+  font-size: 12px;
+}

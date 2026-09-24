@@ -1,5 +1,5 @@
 # ============================================
-# 前端 - Node.js / Vue 3 / Vite
+# Frontend - Node.js / Vue 3 / Vite
 # ============================================
 node_modules/
 .pnp/
@@ -16,7 +16,7 @@ build/
 coverage/
 .nyc_output/
 
-# 环境变量（含密钥，严禁提交）
+# Environment variables (may hold secrets, never commit)
 .env
 .env.local
 .env.*.local
@@ -24,7 +24,7 @@ coverage/
 .env.production
 .env.test
 
-# 前端日志
+# Frontend logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -32,7 +32,7 @@ pnpm-debug.log*
 *.log
 
 # ============================================
-# 后端 - Java / Spring Boot 3 / Maven / Gradle
+# Backend - Java / Spring Boot 3 / Maven / Gradle
 # ============================================
 target/
 build/
@@ -41,7 +41,7 @@ bin/
 .gradle/
 .mvn/wrapper/maven-wrapper.jar
 
-# 本地配置（含数据库密码等，严禁提交）
+# Local configuration (holds the database password and other secrets, never commit)
 application-local.yml
 application-local.yaml
 application-local.properties
@@ -49,7 +49,7 @@ application-dev.yml
 application-dev.yaml
 application-dev.properties
 
-# 密钥 / 证书
+# Keys / certificates
 *.key
 *.pem
 *.jks
@@ -58,11 +58,11 @@ application-dev.properties
 secrets.yml
 secrets.yaml
 
-# 后端日志
+# Backend logs
 logs/
 *.log
 
-# 编译产物
+# Build output
 *.class
 *.jar
 *.war
@@ -71,7 +71,7 @@ logs/
 *.tar.gz
 
 # ============================================
-# 通用 - IDE / 编辑器
+# General - IDEs / editors
 # ============================================
 # IntelliJ IDEA
 .idea/
@@ -85,13 +85,13 @@ logs/
 .project
 .settings/
 
-# VS Code（只保留团队共享配置）
+# VS Code (keep only the shared team configuration)
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 .lh
 
-# 其他
+# Others
 *.suo
 *.ntvs*
 *.njsproj
@@ -101,7 +101,7 @@ logs/
 *.swo
 
 # ============================================
-# 通用 - 操作系统
+# General - operating systems
 # ============================================
 .DS_Store
 Thumbs.db
@@ -109,7 +109,7 @@ Desktop.ini
 ehthumbs.db
 
 # ============================================
-# 通用 - 临时 / 缓存 / 备份
+# General - temporary / cache / backup files
 # ============================================
 *.tmp
 *.temp
@@ -123,14 +123,14 @@ ehthumbs.db
 *.pid.lock
 
 # ============================================
-# Docker（按需，有则用，无则忽略）
+# Docker (optional: used when present, otherwise ignored)
 # ============================================
 docker-compose.override.yml
 .docker/
 *.pid
 
 # ============================================
-# 测试 / 覆盖率
+# Tests / coverage
 # ============================================
 test-output/
 surefire-reports/
@@ -138,7 +138,7 @@ failsafe-reports/
 *.lcov
 
 # ============================================
-# 文档 / 其他（按需取消注释）
+# Documentation / others (uncomment when needed)
 # ============================================
 # *.pdf
 # *.doc
@@ -147,3 +147,17 @@ failsafe-reports/
 # *.xlsx
 # *.ppt
 # *.pptx
+
+# ============================================
+# Exceptions: frontend paths that must stay under version control
+# ============================================
+# frontend/build/ holds the Vite build configuration modules (vite.config.ts depends on ./build),
+# it produces no build output, so the backend build/ rule must not ignore it
+!frontend/build/
+!frontend/build/**
+# The frontend .env.* files only hold API addresses and flags, no secrets, and must ship with the repository so a fresh clone runs as is.
+# If real secrets are added later, switch to .env.local (already ignored by the rules above).
+!frontend/.env
+!frontend/.env.development
+!frontend/.env.production
+!frontend/.env.test

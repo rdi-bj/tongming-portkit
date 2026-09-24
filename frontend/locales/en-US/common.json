@@ -1,0 +1,21 @@
+{
+  "close": "Close",
+  "logout": "Logout",
+  "error": {
+    "403": "Sorry, you are not authorized to access this page.",
+    "404": "Sorry, the page you visited does not exist."
+  },
+  "back-home": "Back Home",
+  "back": "Back",
+  "unnamed-page": "Unnamed Page",
+  "locale_zh_CN": "简体中文",
+  "locale_en_US": "English",
+  "request": {
+    "failed": "Request failed",
+    "failed-with-status": "Request failed ({status})",
+    "load-file-tree-failed": "Failed to load file tree"
+  },
+  "light": {
+    "dialog-default-title": "Dialog Title"
+  }
+}

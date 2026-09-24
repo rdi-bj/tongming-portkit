@@ -1,0 +1,40 @@
+{
+  "title": "RISC-V's AI Cross-Platform Porting Tool",
+  "layout": {
+    "side": "Side Layout",
+    "top": "Top Layout",
+    "mix": "Mix Layout"
+  },
+  "color-mode": {
+    "dark": "Dark",
+    "light": "Light",
+    "auto": "System"
+  },
+  "config": {
+    "color-mode": "Style Setting",
+    "primary-color": "Primary Color",
+    "menu-color-mode": "Menu Style",
+    "layout": "Layout Setting",
+    "content-width": "Content Width",
+    "breadcrumb": "Breadcrumb"
+  },
+  "content-width": {
+    "fixed": "Fixed",
+    "fluid": "Fluid"
+  },
+  "primary-color": {
+    "default": "Tech Blue (Default)",
+    "awake": "Awake",
+    "mourning": "Dusk",
+    "volcano": "Volcano",
+    "sunset": "Sunset",
+    "morning": "Morning",
+    "green": "Aurora Green",
+    "geek": "Geek Blue",
+    "purple": "Purple"
+  },
+  "not-support-clipboard": "Clipboard not supported",
+  "config-copy-success": "Copied! Paste into src/config.ts",
+  "logo": "Logo",
+  "copy-config": "Copy Config"
+}
